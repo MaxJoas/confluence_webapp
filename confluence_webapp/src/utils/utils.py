@@ -10,14 +10,15 @@ from skimage import measure
 logger = logging.getLogger(__name__)
 
 import cv2
-
+import numpy as np
+import cv2
 
 def visualize_contours(img: np.ndarray, pred_mask: np.ndarray) -> np.ndarray:
     """
-    Visualize contours on a given grayscale image using a prediction mask.
+    Visualize contours on a given image using a prediction mask.
 
     Args:
-        img (np.ndarray): Grayscale image (e.g., from cell imaging).
+        img (np.ndarray): Image (grayscale or RGB).
         pred_mask (np.ndarray): Binary mask with predictions.
 
     Returns:
@@ -28,18 +29,50 @@ def visualize_contours(img: np.ndarray, pred_mask: np.ndarray) -> np.ndarray:
         pred_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
     )
     
-    # Convert grayscale image to RGB for visualization
-    cells_pred = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
-    
+    # Check if the image is grayscale (2D) or RGB (3D with 3 channels)
+    if len(img.shape) == 2 or img.shape[2] == 1:
+        # Convert grayscale to RGB
+        cells_pred = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
+    else:
+        # Use the image directly if it's already RGB
+        cells_pred = img
+
+    # Draw contours on the RGB image
     cells_pred = cv2.drawContours(
         cells_pred, contours_pred, -1, (0, 255, 255), 2
     )
     
     return cells_pred
 
+
+# def visualize_contours(img: np.ndarray, pred_mask: np.ndarray) -> np.ndarray:
+#     """
+#     Visualize contours on a given grayscale image using a prediction mask.
+
+#     Args:
+#         img (np.ndarray): Grayscale image (e.g., from cell imaging).
+#         pred_mask (np.ndarray): Binary mask with predictions.
+
+#     Returns:
+#         np.ndarray: RGB image with contours drawn.
+#     """
+#     # Find contours in the prediction mask
+#     contours_pred, _ = cv2.findContours(
+#         pred_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
+#     )
+    
+#     # Convert grayscale image to RGB for visualization
+#     cells_pred = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
+    
+#     cells_pred = cv2.drawContours(
+#         cells_pred, contours_pred, -1, (0, 255, 255), 2
+#     )
+    
+#     return cells_pred
+
 def close_contour(contour: NDArray[np.float64]) -> NDArray[np.float64]:
     """Close a contour by adding the first point to the end if necessary.
-    
+   
     Args:
         contour: Array of shape (N, 2) containing contour coordinates
         

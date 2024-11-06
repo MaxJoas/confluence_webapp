@@ -32,7 +32,7 @@ class PredictionManager:
         self.device = device
         self.logger = logging.getLogger(__name__)
 
-    def calc_confluence(self, mask: np.ndarray) -> float:
+    def calc_confluence(self, mask: np.ndarray, mask_class: int = 0) -> float:
         """
         Calculate confluence percentage from mask.
 
@@ -43,7 +43,7 @@ class PredictionManager:
             float: Confluence percentage
         """
         total_pixels = mask.shape[0] * mask.shape[1]
-        segmented_pixels = (mask == 0).sum()
+        segmented_pixels = (mask == mask_class).sum()
         return segmented_pixels / total_pixels
 
     def predict_unet(self, 
@@ -79,7 +79,7 @@ class PredictionManager:
 
             full_mask = tf(probs.cpu()).squeeze()
 
-        return (full_mask > threshold).numpy()
+        return (full_mask > threshold).numpy(), full_mask
 
     def predict_detectron(
         self, cfg: Any, image_path: str, weights_path: str
@@ -140,7 +140,6 @@ class PredictionManager:
         model.eval()
         pred, _ = model(image)
         # output prediction to console in Streamlit
-        self.logger.info(f"Prediction: {pred}")
         
 
         # Process results
@@ -149,10 +148,23 @@ class PredictionManager:
             mask_numpy, (original_size[0], original_size[1])
         )
         mask_binary = (mask_resized > 0.5).astype(np.uint8)
-        self.logger.info(f"Mask binary: {mask_binary}")
 
         # Calculate confluence
         confluence = self.calc_confluence(mask_binary)
  
         # Placeholder for SAM model prediction
-        return mask_binary, confluence
+        return mask_binary, confluence, pred
+
+    def predict_cellpose(self, image: ImageType) -> ModelOutput:
+        """
+        Make prediction using Cellpose model.
+
+        Args:
+            image (ImageType): Input image
+
+        Returns:
+            img_out (ImageType): Output image
+            confluence (float): Confluence percentage
+        """
+        # Placeholder for Cellpose model prediction
+        return image, 0.0
