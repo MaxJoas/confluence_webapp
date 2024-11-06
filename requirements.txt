@@ -1,0 +1,21 @@
+pandas==2.2.2
+streamlit==1.26.0
+torchvision
+Pillow==9.4.0
+scipy==1.10.1
+opencv-python==4.7.0.68
+opencv-python-headless==4.7.0.72
+matplotlib==3.6.2
+munch==4.0.0
+numpy==1.24.2
+seaborn==0.12.2
+scikit-image==0.19.3
+scikit-learn==1.2.2
+scikit-multilearn==0.2.0
+toml==0.10.2
+torch==1.13.1
+pip==22.0.4
+pycocotools==2.0.6
+cellpose @ git+https://github.com/MaxJoas/cellpose_fork@main
+-e git+https://github.com/facebookresearch/detectron2.git@650c60ed365db1b04765ffd121574c0765a5c24c#egg=detectron2
+segment_anything==1.0
