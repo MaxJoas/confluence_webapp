@@ -1,7 +1,7 @@
 # Confluence Webapp
 TODO
 
-## Requriements:
+## Requirements:
 - Python 3.10
 - pip
 - gcc
