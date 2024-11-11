@@ -288,7 +288,7 @@ class StreamlitInterface:
         st.image(
             "https://scads.ai/wp-content/themes/scads2023/assets/images/logo.png",
             width=200,
-            use_column_width=False,
+            use_container_width=False,
         )
         st.header("SaxoCell Confluence Detection")
 
