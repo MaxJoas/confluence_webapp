@@ -4,11 +4,12 @@ TODO
 ## Requirements:
 - Python 3.10
 - pip 24.02
-- GCC
+- GCC 5.3.0
 # Installation
 
 ## Installation on Windows with Conda
-- clone repo
+- clone this repo
+- runn the following commands:
 ```
 conda create -n <your-env> python=3.10 pip
 conda activate <your-env>
