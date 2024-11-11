@@ -3,7 +3,7 @@ TODO
 
 ## Requirements:
 - Python 3.10
-- pip
+- pip 24.02
 - GCC
 # Installation
 
@@ -13,10 +13,10 @@ TODO
 conda create -n <your-env> python=3.10 pip
 conda activate <your-env>
 conda install -c conda-forge m2w64-toolchain
-pip install hatch
+python -m pip install torch==1.13.0
+python -m pip install -r requirements.txt
 hatch build
-pip install torch==1.13.0
-pip install -r requirements.txt
+
 ```
 
 ## Installation wiht Python venv 
@@ -26,15 +26,13 @@ pip install -r requirements.txt
 - get models and sample data
 - TODO prepare-all.py
 ## Usage
-- Download the trained models from:
+- Download the trained models from [here](https://cloud.scadsai.uni-leipzig.de/index.php/f/14097626)
 - Run the app with:
   
 ```
-streamlit run confluence_webapp/src/app.py models/lc_models/unet_model_final.pth models/lc_models/d2_model_final.pth models/lc_models/sam_model_final.pth
+streamlit run confluence_webapp/src/app.py models/lc_models/unet_model_final.pth models/lc_models/d2_model_final.pth models/lc_models/sam_model_final.pth --theme.base light --theme.primaryColor blue
 ```
 
 ## Demo
-![image](https://github.com/user-attachments/assets/4e81d2db-b079-4c84-b44d-19d2beba3028)
 
-
-
+![Saxocellwebapp](https://github.com/user-attachments/assets/d30ce3b3-1b86-40c7-b41a-aaa35471b1ca)
