@@ -50,7 +50,7 @@ hatch build
 - Run the app with:
   
 ```
-streamlit run confluence_webapp/src/app.py models/lc_models/unet_model_final.pth models/lc_models/d2_model_final.pth models/lc_models/sam_model_final.pth --theme.base light --theme.primaryColor blue
+streamlit run confluence_webapp/src/app.py  --theme.base light --theme.primaryColor blue
 ```
 - Upload Images from the `data` folder
 This should output the following:
