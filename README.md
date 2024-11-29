@@ -23,6 +23,13 @@ The web app is online [here](TODO) or can be installed locally as described abov
   |   `-- unet_model.pth
   |-- sam_vit_h_4b8939.pth
 # Installation
+## Installation with Docker
+- tested docker version: Docker version 26.1.4, build 5650f9b
+
+```
+docker build -t confluence_app .
+docker run -p 8501:8501 confluence_app
+```
 
 ## Installation on Windows with Conda
 - clone this repo
