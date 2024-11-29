@@ -7,16 +7,21 @@ The web app is online [here](TODO) or can be installed locally as described abov
 - Python 3.10
 - pip 24.02
 - GCC 5.3.0
-- Download the SAM model weights from [here](https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth)
-  - and place into the root directory like:
+- Download the model weights from [here](https://cloud.scadsai.uni-leipzig.de/index.php/s/SBySD7ppB3fJFMt)
+  - unzip the folder so that your structure looks like this:
   ```
   | `confluence_webapp
-  | ---|src
-  | ---|--- app.py
-  | ---|--- ...
-  | `sam_vit_h_4b8939.pth
+  |--|`src
+  |--|-- app.py
+  |--|-- ...
   | `pyproject.toml
-
+  | `models/
+  |-- final
+  |   |-- cellpose_model.pth
+  |   |-- d2_model.pth
+  |   |-- sam_model.pth
+  |   `-- unet_model.pth
+  |-- sam_vit_h_4b8939.pth
 # Installation
 
 ## Installation on Windows with Conda
@@ -47,6 +52,7 @@ hatch build
 ```
 streamlit run confluence_webapp/src/app.py models/lc_models/unet_model_final.pth models/lc_models/d2_model_final.pth models/lc_models/sam_model_final.pth --theme.base light --theme.primaryColor blue
 ```
+- Upload Images from the `data` folder
 This should output the following:
 ```
 Collecting usage statistics. To deactivate, set browser.gatherUsageStats to false.
