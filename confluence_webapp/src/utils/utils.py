@@ -1,17 +1,49 @@
 import logging
-from pathlib import Path
-from typing import Dict, List, Union
+from typing import List
 
+import cv2
 import numpy as np
-import torch
 from numpy.typing import NDArray
 from skimage import measure
 
 logger = logging.getLogger(__name__)
 
-import cv2
-import numpy as np
-import cv2
+
+
+def overlay(image, mask, alpha, color=(255,0,0), resize=None):
+    """Combines image and its segmentation mask into a single image.
+    https://www.kaggle.com/code/purplejester/showing-samples-with-segmentation-mask-overlay
+
+    Params:
+        image: Training image. np.ndarray,
+        mask: Segmentation mask. np.ndarray,
+        color: Color for segmentation mask rendering.  tuple[int, int, int] = (255, 0, 0)
+        alpha: Segmentation mask's transparency. float = 0.5,
+        resize: If provided, both image and its mask are resized before blending them together.
+        tuple[int, int] = (1024, 1024))
+
+    Returns:
+        image_combined: The combined image. np.ndarray
+
+    """
+    color = color[::-1]
+    colored_mask = np.expand_dims(mask, 0).repeat(3, axis=0)
+    colored_mask = np.moveaxis(colored_mask, 0, -1)
+    print(colored_mask.shape)
+    print(image.shape)
+    if len(image.shape) == 2:
+        image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+    masked = np.ma.MaskedArray(image, mask=colored_mask, fill_value=color)
+    image_overlay = masked.filled()
+
+    if resize:
+        image = cv2.resize(image.transpose(1, 2, 0), resize)
+        image_overlay = cv2.resize(image_overlay.transpose(1, 2, 0), resize)
+
+    image_combined = cv2.addWeighted(image, 1 - alpha, image_overlay, alpha, 0)
+
+    return image_combined
+
 
 def visualize_contours(img: np.ndarray, pred_mask: np.ndarray) -> np.ndarray:
     """
@@ -39,36 +71,12 @@ def visualize_contours(img: np.ndarray, pred_mask: np.ndarray) -> np.ndarray:
 
     # Draw contours on the RGB image
     cells_pred = cv2.drawContours(
-        cells_pred, contours_pred, -1, (0, 255, 255), 2
+        cells_pred, contours_pred, -1, (0, 0, 255), 2
     )
     
     return cells_pred
 
 
-# def visualize_contours(img: np.ndarray, pred_mask: np.ndarray) -> np.ndarray:
-#     """
-#     Visualize contours on a given grayscale image using a prediction mask.
-
-#     Args:
-#         img (np.ndarray): Grayscale image (e.g., from cell imaging).
-#         pred_mask (np.ndarray): Binary mask with predictions.
-
-#     Returns:
-#         np.ndarray: RGB image with contours drawn.
-#     """
-#     # Find contours in the prediction mask
-#     contours_pred, _ = cv2.findContours(
-#         pred_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
-#     )
-    
-#     # Convert grayscale image to RGB for visualization
-#     cells_pred = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
-    
-#     cells_pred = cv2.drawContours(
-#         cells_pred, contours_pred, -1, (0, 255, 255), 2
-#     )
-    
-#     return cells_pred
 
 def close_contour(contour: NDArray[np.float64]) -> NDArray[np.float64]:
     """Close a contour by adding the first point to the end if necessary.
@@ -123,46 +131,3 @@ def binary_mask_to_polygon(
 
     return polygons
 
-def get_confluence(
-    data_dict: Dict[str, Union[str, int, Path]], 
-    pred: Dict[str, torch.Tensor]
-) -> tuple[float, List[List[List[float]]]]:
-    """Calculates impedance from detectron predictions.
-
-    Args:
-        data_dict: Metadata about image and annotations with keys:
-            - file_name: str or Path
-            - height: int
-            - width: int
-        pred: Data of detectron2 predictions containing:
-            - instances: object with pred_masks tensor
-            
-    Returns:
-        Tuple containing:
-            - confluence: percentage of cells on image (float between 0 and 1)
-            - annotations: List of polygon segmentations
-    """
-    masks: torch.Tensor = pred["instances"].pred_masks
-    file_name: Union[str, Path] = data_dict["file_name"]
-    if not isinstance(file_name, str):
-        file_name = file_name.name  # when file comes from webapp
-        
-    annotations: List[List[List[float]]] = []
-    pixel_sum: int = 0
-    
-    for i in range(len(pred["instances"])):
-        mask_array: NDArray[np.bool_] = masks[i, :, :].detach().cpu().clone().numpy()
-        pixel_sum += int(mask_array.sum())
-        
-        try:
-            segmentation: List[List[float]] = binary_mask_to_polygon(mask_array)
-            annotations.append(segmentation)
-        except Exception as e:
-            logger.warning(e)
-            logger.warning(
-                f"Could not create polygon from prediction {i} from image {file_name}"
-            )
-            logger.warning(f"Shape: {np.unique(mask_array)}")
-
-    confluence: float = pixel_sum / (data_dict["height"] * data_dict["width"])
-    return confluence, annotations

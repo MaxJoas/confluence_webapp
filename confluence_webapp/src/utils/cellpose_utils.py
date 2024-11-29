@@ -1,6 +1,7 @@
 import numpy as np
 from skimage import measure
 
+
 def calculate_mean_diameters(masks):
     horizontal_diameters = []
     vertical_diameters = []
@@ -12,7 +13,7 @@ def calculate_mean_diameters(masks):
 
         # Calculate the diameter using the maximum distance between points in the contour
         if len(contours) > 0:
-            #contour = contours[0]
+            # contour = contours[0]
             for contour in contours:
                 y, x = contour.T
                 dx = x[:, np.newaxis] - x

@@ -1,4 +1,4 @@
-from typing import Any, Callable, List, Optional, Tuple
+from typing import Callable, List, Optional
 
 import cv2
 import numpy as np
@@ -39,6 +39,9 @@ class WebappDataset(Dataset):
         try:
             image: Image.Image = Image.open(self.file_list[idx])
             image_array: NDArray[np.uint8] = np.array(image)
+            # save image array to disk as python pickle
+            # with open(f"image_array_{idx}.pkl", "wb") as f:
+                # pickle.dump(image_array, f)
         except Exception as e:
             print("ERROR IN READING IMG")
             print(f" path: {self.file_list[idx]}")
@@ -47,6 +50,9 @@ class WebappDataset(Dataset):
 
         try:
             image_rgb: NDArray[np.uint8] = cv2.cvtColor(image_array, cv2.COLOR_BGR2RGB)
+            # save image_rgb to disk as python pickle
+            # with open(f"image_rgb_{idx}.pkl", "wb") as f:
+                # pickle.dump(image_rgb, f)
         except Exception as e:
             print("ERROR IN COLOR")
             print(f"image: {self.file_list[idx]}")
@@ -54,16 +60,17 @@ class WebappDataset(Dataset):
             raise ValueError(f"image: BGR to RGB does not work {self.file_list[idx]}")
 
         if self.transform:
-            image_transformed: torch.Tensor = self.transform(image_rgb)
-            return image_transformed
+            image= self.transform(image_rgb)
+            return image
 
-        return torch.from_numpy(image_rgb)
+        return image
 
 
 class ResizeAndPad:
     """
     Resize and pad images and masks to a target size.
 
+    ...
     Attributes
     ----------
     target_size : int
@@ -72,32 +79,27 @@ class ResizeAndPad:
         a transform to resize the image and masks
     """
 
-    def __init__(self, target_size: int) -> None:
+    def __init__(self, target_size):
         self.target_size = target_size
         self.transform = ResizeLongestSide(target_size)
         self.to_tensor = transforms.ToTensor()
 
-    def __call__(self, image: NDArray[np.uint8]) -> torch.Tensor:
+    def __call__(self, image):
         # Resize image and masks
         og_h, og_w, _ = image.shape
-        image_resized: NDArray[np.uint8] = self.transform.apply_image(image)
-        image_tensor: torch.Tensor = self.to_tensor(image_resized)
+        image = self.transform.apply_image(image)
+        image = self.to_tensor(image)
 
         # Pad image and masks to form a square
-        _, h, w = image_tensor.shape
-        max_dim: int = max(w, h)
-        pad_w: int = (max_dim - w) // 2
-        pad_h: int = (max_dim - h) // 2
+        _, h, w = image.shape
+        max_dim = max(w, h)
+        pad_w = (max_dim - w) // 2
+        pad_h = (max_dim - h) // 2
 
-        padding: Tuple[int, int, int, int] = (
-            pad_w,
-            pad_h,
-            max_dim - w - pad_w,
-            max_dim - h - pad_h,
-        )
-        image_padded: torch.Tensor = transforms.Pad(padding)(image_tensor)
+        padding = (pad_w, pad_h, max_dim - w - pad_w, max_dim - h - pad_h)
+        image = transforms.Pad(padding)(image)
+        return image
 
-        return image_padded
 
 
 def load_datasets(file_list: List[str]) -> DataLoader:

@@ -40,11 +40,11 @@ class SAMModel(nn.Module):
 
     def setup(self) -> None:
         """Initialize and configure the model."""
-        if not os.path.exists("sam_vit_h_4b8939.pth"):
+        if not os.path.exists(os.path.join("models", "sam_vit_h_4b8939.pth")):
             raise FileNotFoundError(
                 "SAM model weights not found. Please download the weights from the link in the README."
             )
-        self.model = sam_model_registry["vit_h"]("sam_vit_h_4b8939.pth")
+        self.model = sam_model_registry["vit_h"](os.path.join("models", "sam_vit_h_4b8939.pth"))
 
         if self.freeze_encoder:
             for param in self.model.image_encoder.parameters():
