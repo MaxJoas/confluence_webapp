@@ -7,6 +7,8 @@ The web app is online [here](TODO) or can be installed locally as described abov
 - Python 3.10
 - pip 24.02
 - GCC 5.3.0
+- Clone this repo `git clone https://github.com/MaxJoas/confluence_webapp.git`
+- Change into repo `cd confluence_webapp`
 - Download the model weights from [here](https://cloud.scadsai.uni-leipzig.de/index.php/s/JXDD86cMbj7LD5j)
   - unzip the folder so that your structure looks like this:
   ```
