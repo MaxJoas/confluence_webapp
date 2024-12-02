@@ -52,8 +52,7 @@ pip install torch==1.13.0
 pip install -e .
 hatch build
 ```
-## Usage
-- Download the trained models from [here](https://cloud.scadsai.uni-leipzig.de/index.php/f/14097626)
+## Usaage
 - Run the app with:
   
 ```
