@@ -1,7 +1,7 @@
 # Confluence Webapp
 This streamlit web app acompaigns our paper "Zero-Shot, Big-Shot, Active-Shot - How to estimate cell confluence, lazily". It allows users to select one of the four fine-tuned models and upload images.
 The model will then detect the cells and calculate the confluence. The confluence report can then be downloaded as CSV file.
-The web app is online [here](TODO) or can be installed locally as described above.
+The web app is online [here](https://livinglab.scadsai.uni-leipzig.de/cell-confluence/) or can be installed locally as described above.
 
 ## Requirements:
 - Python 3.10
