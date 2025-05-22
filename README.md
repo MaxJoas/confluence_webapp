@@ -33,6 +33,13 @@ docker build -t confluence_app .
 docker run -p 8501:8501 confluence_app
 ```
 
+## Installation wiht UV
+- clone repo
+- run the following commands:
+```
+uv pip install torch==1.13.0
+uv pip install -e .
+```
 ## Installation on Windows with Conda
 - clone this repo
 - run the following commands:
@@ -46,13 +53,7 @@ hatch build
 
 ```
 
-## Installation wiht Python venv 
-- clone repo
-- run the following commands:
-```
-pip install torch==1.13.0
-pip install -e .
-hatch build
+
 ```
 ## Usaage
 - Run the app with:
